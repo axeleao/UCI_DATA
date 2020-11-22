@@ -30,7 +30,7 @@
   },
   "scripts": {
     "dev": "nodemon src/",
-    "start": "index.js"
+    "start": "src/index.js"
   },
   "keywords": [],
   "author": "",
