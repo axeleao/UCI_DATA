@@ -29,7 +29,8 @@
     "kexec": "^3.0.0"
   },
   "scripts": {
-    "dev": "nodemon src/"
+    "dev": "nodemon src/",
+    "start": "index.js"
   },
   "keywords": [],
   "author": "",
