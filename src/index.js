@@ -9,9 +9,19 @@ const { database } = require('./keys');
 const passport = require('passport');
 const fileUpload = require('express-fileupload');
 
+
+
+
 //inicializations
 const app = express();
 require('./lib/passport');
+
+//************************************************************** */
+//Inicio: Agregando Enlace Dinamico de Puertos
+const PORT = process.env.PORT || 4000;
+app.listen(PORT);
+//Fin: Agregando Enlace Dinamico de Puertos
+//************************************************************** */
 
 //settings
 //app.set('port', 4000);
