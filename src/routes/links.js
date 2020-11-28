@@ -471,10 +471,16 @@ router.post('/PacienteEscogido', isLoggedIn, async (req, res) => {
     const { idPaciente } = req.body;
     console.log("PacienteEscogido POST req.body *******************************************************");
     console.log(req.body);
+    console.log(idPaciente);
     
     const user_rows = await pool.query('SELECT user_mode FROM USERS where id = ?', req.user.id);
     const user_mode = user_rows[0].user_mode;
     console.log('Estamos en PacienteEscogido ************************************');
+    const ID_HC = await pool.query(
+        "SELECT ID_HIST_CLINICA FROM PACIENTES " +
+        "WHERE ID_PACIENTE = ?; ", idPaciente);
+
+    console.log("ID_HIST_CLINICA : " + ID_HC[0].ID_HIST_CLINICA);
 
     if (user_mode == 'ADMINISTRADOR' || user_mode == 'DOCTOR') {
         //const links = await pool.query('SELECT concat(u.last_name," ", u.name   ) fullname ,u.no_id cedula, u.email correo, l.title title, l.description description, l.created_at created_at, l.status status, l.id id, l.file_name file_name FROM USERS u JOIN LINKS l on u.id = l.user_id;');
@@ -494,7 +500,7 @@ router.post('/PacienteEscogido', isLoggedIn, async (req, res) => {
             "ON PAC.id_Hist_Clinica = HCL.id_Hist_Clinica                                     "+
             "INNER JOIN UCI UCI                                                               "+
             "ON UCI.id_UCI = PAC.UCI_Asignada                                                 "+
-            "WHERE HCL.id_Hist_Clinica = ?;", idPaciente
+            "WHERE HCL.id_Hist_Clinica = ?;", ID_HC[0].ID_HIST_CLINICA//idPaciente
         );
 
         console.log("consulta LINKS ------------------------******************************");
@@ -519,7 +525,7 @@ router.post('/PacienteEscogido', isLoggedIn, async (req, res) => {
             "ON PAC.id_Hist_Clinica = HCL.id_Hist_Clinica                                     "+
             "INNER JOIN UCI UCI                                                               "+
             "ON UCI.id_UCI = PAC.UCI_Asignada                                                 "+
-            "WHERE HCL.id_Hist_Clinica = ?;", idPaciente
+            "WHERE HCL.id_Hist_Clinica = ?;", ID_HC[0].ID_HIST_CLINICA//idPaciente
         );
 
         console.log("consulta LINKS ------------------------******************************");
@@ -711,8 +717,18 @@ router.post('/InsertPacienteUCI/', isLoggedIn, async (req, res) => {
         frec_Car_Esperada} = req.body;
     //const { idClase } = document.getElementById("IdClase").value;
     const user_rows = await pool.query('SELECT user_mode FROM USERS where id = ?', req.user.id);
+    console.log("id cama*********************************************");
+    console.log(Sel_Cama);
+    console.log(Sel_UCI);
+    const id_cama = await pool.query(
+        "SELECT CAM.ID_CAMA FROM CAMAS CAM "+
+        "WHERE CAM.NUMERO_CAMA = ? "+
+        "AND CAM.ID_UCI = ?; ",
+        [Sel_Cama, Sel_UCI]);
     console.log("USUARIOOOOOO POST InsertPacienteUCI __________________*************************");
     console.log(user_rows);
+    console.log("ID_CAMA = ", id_cama);    
+    console.log(id_cama[0].ID_CAMA);
     const user_mode = user_rows[0].user_mode;
 
     if (user_mode == 'ADMINISTRADOR' || user_mode == 'DOCTOR' || user_mode == 'ENFERMERO') {
@@ -731,7 +747,7 @@ router.post('/InsertPacienteUCI/', isLoggedIn, async (req, res) => {
             "VALUES(?,?,?,NOW(),?,?,?,?,?);",
             [id_hcl,               
                 Sel_UCI,              
-                Sel_Cama,             
+                id_cama[0].ID_CAMA,//Sel_Cama,             
                 estado_Paciente,      
                 indicaciones_Paciente,
                 presion_Art_Esperada, 
