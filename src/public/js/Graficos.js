@@ -132,6 +132,7 @@ var datos = {
 
 window.line = new Chart(canvas_Prueba, datos);
 
+/*
 var grafico_Prueba =  new Chart(canvas_Prueba,{
     type: "line",
     data:{
@@ -168,7 +169,7 @@ var grafico_Prueba =  new Chart(canvas_Prueba,{
             }
     }
 })
-
+*/
 
 
 /*
