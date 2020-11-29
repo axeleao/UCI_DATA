@@ -599,11 +599,16 @@ router.post('/Ing_Signos', isLoggedIn, async (req, res) => {
     
     const user_rows = await pool.query('SELECT user_mode FROM USERS where id = ?', req.user.id);
     const user_mode = user_rows[0].user_mode;
-    const id_usuario = req.user.id;
+    const id_usuario = req.user.id;//ID HISTORIA CLINICA
+    const id_paciente = await pool.query(
+        "SELECT ID_PACIENTE FROM PACIENTES "+
+        "WHERE ID_HIST_CLINICA = ?;", req.user.id);
     console.log("id usuario:");
     console.log(id_usuario);
     console.log('Estamos en Ing_Signos POST ************************************');
     console.log(req.body.Frec_Card);
+    console.log(idPaciente);
+    console.log(id_paciente[0].ID_PACIENTE);
     
 
     if (user_mode == 'ADMINISTRADOR' || user_mode == 'DOCTOR' || user_mode == 'ENFERMERO') {
@@ -613,14 +618,14 @@ router.post('/Ing_Signos', isLoggedIn, async (req, res) => {
         await pool.query(
             "INSERT INTO FREC_CARDIACA (id_Usuario, id_Paciente, hora_Toma_Frec, valor_Toma_Frec)      "+
             //"VALUES (id_usuario, idPaciente, SYSDATE, Frec_Card);                                      "+
-            "VALUES (?, ?, SYSDATE(), ?);", [id_usuario, idPaciente, req.body.Frec_Card]
+            "VALUES (?, ?, SYSDATE(), ?);", [id_usuario, id_paciente[0].ID_PACIENTE, req.body.Frec_Card]
         );
         
         console.log('Ingresando Valores en Sat Oxigeno');
         await pool.query(
             "INSERT INTO SAT_OXIGENO (id_Usuario, id_Paciente, hora_Toma_Sat, valor_Toma_Sat)        "+
             //"VALUES (id_usuario, idPaciente, SYSDATE, Pres_Art);
-            "VALUES (?, ?, SYSDATE(), ?);", [id_usuario, idPaciente, req.body.Sat_Ox]
+            "VALUES (?, ?, SYSDATE(), ?);", [id_usuario, id_paciente[0].ID_PACIENTE, req.body.Sat_Ox]
             
         );
 
@@ -628,7 +633,7 @@ router.post('/Ing_Signos', isLoggedIn, async (req, res) => {
         await pool.query(
             "INSERT INTO PRESION_ARTERIAL (id_Usuario, id_Paciente, hora_Toma_Pres_Art, valor_Toma_Pres_Art)   "+
             //"VALUES (id_usuario, idPaciente, SYSDATE, CONCAT(Sistolica,'/',Diastolica));               "+
-            "VALUES (?, ?, SYSDATE(), CONCAT(?,'/',?));", [id_usuario, idPaciente, req.body.Sistolica, req.body.Diastolica]
+            "VALUES (?, ?, SYSDATE(), CONCAT(?,'/',?));", [id_usuario, id_paciente[0].ID_PACIENTE, req.body.Sistolica, req.body.Diastolica]
         );
 
         const pac_HC = await pool.query(

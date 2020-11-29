@@ -362,7 +362,7 @@ let Canvas_P_Crit = document.getElementById("Signos_Criticos").getContext("2d");
 
         //char.update();
 
-    }, 1000);
+    }, 10000);
 
 
     function getRandom(min, max){

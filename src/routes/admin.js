@@ -137,7 +137,15 @@ router.post('/generarHorarios',  async (req, res) => {
 
     //OBTENER SIGNOS VITALES
     router.post('/get_Signos_Vitales',  async (req, res) => {
-        console.log(req.body);
+        console.log("Estamos en get_Signos_Vitales *************------*********************");
+        console.log("req.body.idPaciente: ",req.body.idPaciente);
+        console.log("req.body: ", req.body);
+        const id_paciente = await pool.query(
+            "SELECT ID_PACIENTE FROM PACIENTES "+
+            "WHERE ID_HIST_CLINICA = ?;", req.body.idPaciente);
+        console.log(id_paciente[0].ID_PACIENTE);
+        console.log("id_paciente : ", id_paciente);
+
         signos = await pool.query(
             "SELECT FRE.valor_Toma_Frec,                                                                                                                                              "+
             "		date_format(FRE.hora_Toma_Frec, '%d%b %H:%i') hora_dia,                                                                                                           "+
@@ -152,7 +160,7 @@ router.post('/generarHorarios',  async (req, res) => {
             "ON PRE.id_Pres_Art = FRE.id_Frec_Card                                                         "+
             "WHERE FRE.id_Paciente =  ?                                                                                                                                             "+
             "ORDER BY FRE.hora_Toma_Frec DESC                                                                                                                                         "+
-            "LIMIT 12;", [req.body.idPaciente]
+            "LIMIT 12;", id_paciente[0].ID_PACIENTE// [req.body.idPaciente]
         );
         console.log("Signos Vitales");
         console.log(signos);
