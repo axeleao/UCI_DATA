@@ -179,14 +179,16 @@ router.post('/alertaMedicos', isLoggedIn, async (req, res) => {
 
         
     if (!bolean[0]) {
+        console.log("No hay medicos registrados");
         req.flash('message', 'No hay medicos registrados');
-        return res.redirect('/forgot');
+        return res.redirect('/links/requests');
     }
 
     //await pool.query("SELECT email FROM USERS WHERE email = 'rrincona1@ucentral.edu.co'");
     //await pool.query('UPDATE USERS SET token = ?, token_life = ? WHERE email = ?', [token, Date.now() + 3600000, req.body.email]);
 
     try {
+        console.log("Enviar Correo");
         //sgMail.setApiKey('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');
         sgMail.setApiKey('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');
         const msg = {
@@ -207,11 +209,14 @@ router.post('/alertaMedicos', isLoggedIn, async (req, res) => {
                 '\n' +
                 'Acercate lo más pronto posible a la Unidad de Cuidados Intensivos\n\n' ,
         };
+        console.log("Sale Enviar Correo");
         await sgMail.send(msg);
         req.flash('message', 'Hemos enviado la alerta a los medicos disponibles');
         if (user_mode == 'ADMINISTRADOR' || user_mode == 'DOCTOR') {
+            console.log("Entra a links/dashBoardDoctor");
             res.render('links/dashBoardDoctor', { pac_HC });
         }else{
+            console.log("Entra a links/dashBoard");
             res.render('links/dashBoard', { pac_HC });
         };
         //req.flash('message', 'Se ha enviado la alerta a los medicos');
